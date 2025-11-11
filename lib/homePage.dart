@@ -27,9 +27,22 @@ class _HomePageState extends State<HomePage> {
       body: Center(
         child: FutureBuilder<List<User>> (
           future: futureUsers,
-          builder: ((context, snapshot) {
+          builder: ((context, AsyncSnapshot snapshot) {
             if (snapshot.hasData) {
-              return const Text('I has data');
+              return ListView.separated(
+                itemBuilder: (context, index) { 
+                User user = snapshot.data?[index];
+                return ListTile(
+                  title: Text(user.email),
+                  subtitle: Text(user.name.first),
+                  trailing: const Icon(Icons.chevron_right_outlined),
+                  onTap: (() => {abrirPagina(context, user)}),
+                  );
+              },
+               separatorBuilder: (context, index) {
+                return const Divider(color: Colors.red);
+               },
+                itemCount: snapshot.data!.length);
             }else if(snapshot.hasError){
               return Text('Error: ${snapshot.error}');
             }
@@ -40,7 +53,7 @@ class _HomePageState extends State<HomePage> {
       ));
   }
 
-  abrirPagina(context){
+  abrirPagina(context, User user){
     Navigator.push(context, MaterialPageRoute(builder: (context) => DetallesPage()));
   }
 }
